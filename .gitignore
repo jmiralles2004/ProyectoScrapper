@@ -1,0 +1,38 @@
+# ===== VARIABLES DE ENTORNO =====
+.env
+.env.local
+.env.*.local
+
+# ===== PYTHON =====
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ===== DOCKER =====
+postgres_data/
+redis_data/
+minio_data/
+qdrant_data/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ===== SISTEMA =====
+.DS_Store
+Thumbs.db
+
+# ===== ARCHIVOS TEMPORALES =====
+*.log
+/errores.md
