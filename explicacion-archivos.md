@@ -5,13 +5,6 @@ Fase 0 es la **infraestructura base** del proyecto JobMatch. Aquí se definen to
 
 ---
 
-## 📁 Carpetas y Archivos
-
-### `.pytest_cache/` → ⚠️ No eliminar (está en .gitignore)
-Se genera automáticamente cuando ejecutas `pytest`. Contiene caché de tests.
-
----
-
 ### `nginx-proxy/` → ⚠️ No eliminar (CRÍTICO)
 **Propósito**: Nginx es la "puerta de entrada" de toda la aplicación. Recibe todas las solicitudes HTTP y las dirige al servicio correcto.
 
@@ -20,33 +13,6 @@ Se genera automáticamente cuando ejecutas `pytest`. Contiene caché de tests.
 - `nginx.conf`: Configura las reglas de Nginx:
   - Ruta `/health` → Verifica que Nginx está vivo (Docker healthcheck)
   - Otras rutas → Retorna 404 (error no encontrado)
-
----
-
-### `tests/` → No eliminar (está en .gitignore)
-**Propósito**: Validar que todos los servicios funcionan correctamente.
-
-**Tests disponibles** (10 en total):
-
-#### PostgreSQL (3 tests)
-- `test_postgres_connection` - ¿Acepta conexiones? ¿Responde a SELECT 1?
-- `test_pgvector_extension` - ¿Está instalada la extensión pgvector?
-- `test_users_table_exists` - ¿Fue creada la tabla users?
-
-#### Redis (2 tests)
-- `test_redis_connection` - ¿Responde a PING?
-- `test_redis_set_get` - ¿Funciona guardar/recuperar datos?
-
-#### MinIO (2 tests)
-- `test_minio_connection` - ¿Es accesible? ¿Puedo listar buckets?
-- `test_minio_bucket_create_delete` - ¿Puedo crear y eliminar buckets?
-
-#### Qdrant (1 test)
-- `test_qdrant_connection` - ¿Es accesible? ¿Puedo listar colecciones?
-
-#### Nginx (2 tests)
-- `test_nginx_health` - ¿Retorna HTTP 200 en /health?
-- `test_nginx_unknown_route_returns_404` - ¿Rutas desconocidas retornan 404?
 
 ---
 
