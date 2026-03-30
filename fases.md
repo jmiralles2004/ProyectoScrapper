@@ -10,7 +10,7 @@ Plataforma que conecta candidatos con ofertas de trabajo mediante IA.
 
 ### Stack Tecnológico
 - **Backend**: FastAPI (Python 3.11+)
-- **Bases de datos**: PostgreSQL, Redis
+- **Bases de datos**: PostgreSQL
 - **Almacenamiento**: MinIO (JSON de CVs)
 - **IA/ML**: Integración con proveedor externo (fuera de este repositorio)
 - **Proxy/Gateway**: Nginx
@@ -107,7 +107,7 @@ Cuando trabajes en una fase, debes entregar:
 
 ### FASE 0: Infraestructura Base
 - Docker Compose con todos los servicios
-- PostgreSQL, Redis, MinIO, Qdrant, Nginx
+- PostgreSQL, MinIO, Qdrant, Nginx
 - Healthchecks y redes configuradas
 - Scripts de inicialización
 

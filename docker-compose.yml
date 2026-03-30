@@ -6,7 +6,6 @@ networks:
 # Volúmenes para persistencia de datos
 volumes:
   postgres_data:     # Almacenamiento de base de datos
-  redis_data:        # Almacenamiento de caché
   minio_data:        # Almacenamiento de archivos
   qdrant_data:       # Almacenamiento de vectores
 
@@ -33,28 +32,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    restart: unless-stopped
-
-  # Cache en memoria Redis
-  redis:
-    image: redis:7-alpine
-    container_name: jobmatch-redis
-    command: >
-      redis-server
-      --requirepass ${REDIS_PASSWORD}
-      --appendonly yes
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - jobmatch-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     restart: unless-stopped
 
   # Almacenamiento de objetos (archivos)
@@ -201,8 +178,6 @@ services:
       - jobmatch-network
     depends_on:
       postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
       minio:
         condition: service_healthy

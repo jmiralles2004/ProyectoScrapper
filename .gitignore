@@ -19,7 +19,6 @@ env/
 
 # ===== DOCKER =====
 postgres_data/
-redis_data/
 minio_data/
 qdrant_data/
 
