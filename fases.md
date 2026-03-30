@@ -45,6 +45,7 @@ jobmatch/
 - Cada fase es un entregable **100% funcional y testeado**
 - Una fase terminada = **se sube a GitHub con tag** y NO se vuelve a tocar
 - Las fases son independientes y pueden desarrollarse en paralelo (con mocks)
+- Al cerrar una fase, también se escribe su `explicacion-archivos.md` con el mismo estilo de la Fase 0 y se crea su copia inmune en `FaseN/_backup_phaseN_base/`
 
 ### 2. Calidad de Código
 - **NO repetir código**: funciones, clases, atributos, variables
@@ -64,6 +65,7 @@ jobmatch/
 - Cada fase genera:
   - `README.md` con instrucciones de ejecución
   - `ENDPOINTS.md` con todos los endpoints documentados
+  - `explicacion-archivos.md` con la estructura y el uso de la fase, siguiendo el estilo de Fase 0
   - OpenAPI automático (FastAPI) en `/docs`
 - Documentación en **inglés o español** (consistente)
 

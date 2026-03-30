@@ -1,0 +1,14 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+asyncpg==0.30.0
+pydantic-settings==2.8.1
+PyJWT==2.10.1
+minio==7.2.15
+pypdf==5.4.0
+pypdfium2==4.30.0
+pytesseract==0.3.13
+python-multipart==0.0.20
+python-dotenv==1.0.1
+
+pytest==8.3.4
+httpx==0.28.1
