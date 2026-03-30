@@ -1,70 +1,89 @@
-# Explicación de la Estructura - Fase 2
+# Explicación de la Estructura - Fase 6
 
 ## 📋 Descripción General
-Fase 2 añade el **servicio de perfiles** al proyecto JobMatch. Esta fase permite subir CVs en PDF, extraer su texto (incluyendo OCR para PDFs escaneados) y guardar tanto metadatos como contenido para usarlos en fases posteriores.
+Fase 6 añade el **servicio de integración** al proyecto JobMatch. Esta fase conecta un proveedor externo de ofertas/vectores con la base vectorial (Qdrant) y expone recomendaciones personalizadas por perfil de cliente.
 
 ---
 
-### `services/profile-service/` → ⚠️ No eliminar (CRÍTICO)
-**Propósito**: Contiene la API y la lógica de Fase 2 para perfil de candidato.
+### `services/integration-service/` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Contiene la API y la lógica de Fase 6 para integración y recomendaciones.
 
 **Archivos**:
 - `Dockerfile`: Construye el contenedor del servicio
 - `requirements.txt`: Dependencias del servicio
-- `app/main.py`: Endpoints `/profiles/*` y healthchecks
-- `app/repositories/profiles.py`: Persistencia en PostgreSQL
-- `app/storage/minio_storage.py`: Guardado de JSON en MinIO
-- `app/utils/pdf.py`: Extracción híbrida (texto embebido + OCR con Tesseract)
-- `app/utils/cv_etl.py`: Normalización y ETL base del CV (secciones, entidades, quality)
-- `tests/test_profiles.py`: Pruebas unitarias del flujo principal
+- `app/main.py`: Endpoints `/integration/*` y healthchecks
+- `app/services/integration.py`: Orquestación de ingesta y ranking
+- `app/vectorstore/qdrant_store.py`: Operaciones con Qdrant
+- `tests/test_integration.py`: Pruebas unitarias del flujo principal
 
 ---
 
 ### `docker-compose.yml` → ⚠️ No eliminar (CRÍTICO)
-**Propósito**: Integra `profile-service` con PostgreSQL, MinIO y Nginx.
+**Propósito**: Integra `integration-service` con Qdrant y Nginx.
 
-**Puntos clave de Fase 2**:
-- Nuevo servicio: `profile-service` (puerto interno 8000)
-- Variables de MinIO y JWT inyectadas por entorno
+**Puntos clave de Fase 6**:
+- Nuevo servicio: `integration-service`
+- Dependencia de `qdrant`
+- Variables de integración y colecciones vectoriales por entorno
 - Healthcheck activo para que Nginx espere al servicio
 
 ---
 
 ### `nginx-proxy/nginx.conf` → ⚠️ No eliminar (CRÍTICO)
-**Propósito**: Publica las rutas de perfiles al exterior.
+**Propósito**: Publica las rutas de integración al exterior.
 
-**Rutas de Fase 2**:
-- `/profiles/health`
-- `/profiles/cv`
-- `/profiles/me`
-
----
-
-### `init-db.sql` → ⚠️ No eliminar (CRÍTICO)
-**Propósito**: Crea la nueva tabla `profiles`.
-
-**¿Qué guarda `profiles`?**
-- Relación 1:1 con `users` (`user_id` único)
-- Nombre de archivo original (`cv_filename`)
-- Texto extraído (`cv_text`)
-- Referencia al JSON en MinIO (`cv_object_key`)
+**Rutas de Fase 6**:
+- `/integration/health`
+- `/integration/offers/import`
+- `/integration/profiles/import-vector`
+- `/integration/offers/catalog`
+- `/integration/offers/recommended`
 
 ---
 
-### `Fase2/` → ⚠️ No eliminar (CRÍTICO)
-**Propósito**: Contiene la documentación oficial de la fase y su respaldo inmutable.
+### `.env` y `.env.docker` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Definen configuración del servicio de integración.
 
-**Archivos**:
+**Variables añadidas en Fase 6**:
+- `INTEGRATION_SERVICE_PORT`
+- `INTEGRATION_VECTOR_SIZE`
+- `QDRANT_COLLECTION_PROFILES`
+- `QDRANT_COLLECTION_OFFERS`
+- `INTEGRATION_INGEST_API_KEY`
+
+---
+
+### `Fase6/` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Contiene documentación oficial y respaldo inmutable de la fase.
+
+**Archivos esperados**:
 - `README.md`
 - `ENDPOINTS.md`
 - `criterios-aceptacion.md`
 - `explicacion-archivos.md`
-- `_backup_phase2_base/`
+- `_backup_phase6_base/`
 
 ---
 
 ## ✅ Hechos clave
-- Se mantiene JWT como mecanismo de autenticación.
-- El CV se sube en PDF y se procesa en backend (con OCR cuando viene escaneado).
-- Los datos se guardan en PostgreSQL y MinIO en formato ETL (`raw`, `normalized`, `quality`).
-- Fase 2 queda preparada para Fase 3 (embeddings).
+- La plataforma no calcula embeddings internamente: los recibe de fuente externa.
+- Qdrant actúa como base vectorial para catálogo y recomendación.
+- El endpoint de recomendación usa JWT para devolver ofertas adaptadas al perfil del cliente.
+
+---
+
+## Validacion obligatoria y evidencia operativa
+
+### Suites de pruebas verificadas
+- Activas: `services/auth-service/tests`, `services/profile-service/tests`, `services/integration-service/tests`.
+- Backup de fase: `Fase1/_backup_phase1_base/phase1_auth-service/tests`, `Fase2/_backup_phase2_base/phase2_profile-service/tests`, `Fase6/_backup_phase6_base/phase6_integration-service/tests`.
+
+### Que persiste cada tipo de prueba
+- Auth unit tests: usuarios en repositorio fake en memoria.
+- Profile unit tests: perfiles y payload ETL en memoria (repo/storage fake).
+- Integration unit tests: ofertas y vectores en memoria (vector store fake).
+- Smoke test Fase 6: datos simulados reales en Qdrant + resumen en `/tmp/phase6-smoke-summary.json`.
+
+### Recomendacion de ejecucion
+- Evitar `pytest -q` en raiz cuando conviven backups y servicios activos, porque hay colisiones de import por modulos `app` con el mismo nombre.
+- Ejecutar por ruta de suite para garantizar aislamiento y resultados consistentes.

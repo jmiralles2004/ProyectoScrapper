@@ -5,15 +5,14 @@
 ### Descripción General
 Plataforma que conecta candidatos con ofertas de trabajo mediante IA.
 - Usuarios suben CV (PDF) + descripción personal
-- Sistema genera embeddings (vectores) de CVs y ofertas
-- Calcula porcentaje de match entre CV y ofertas
-- Muestra ofertas personalizadas filtradas por match
+- Sistema recopila ofertas desde un proveedor externo
+- Sistema muestra ofertas priorizadas en base al perfil del cliente
 
 ### Stack Tecnológico
 - **Backend**: FastAPI (Python 3.11+)
-- **Bases de datos**: PostgreSQL (pgvector), Redis (colas), Qdrant (vectores)
+- **Bases de datos**: PostgreSQL, Redis
 - **Almacenamiento**: MinIO (JSON de CVs)
-- **IA/ML**: sentence-transformers (all-MiniLM-L6-v2, 384 dims)
+- **IA/ML**: Integración con proveedor externo (fuera de este repositorio)
 - **Proxy/Gateway**: Nginx
 - **Contenedores**: Docker + Docker Compose
 - **Tests**: pytest con cobertura > 85%
@@ -30,9 +29,7 @@ jobmatch/
 ├── services/
 │ ├── auth-service/
 │ ├── profile-service/
-│ ├── embedding-service/
-│ ├── offer-service/
-│ └── matching-service/
+│ └── integration-service/
 └── tests/
 └── e2e/
 
@@ -46,6 +43,7 @@ jobmatch/
 - Una fase terminada = **se sube a GitHub con tag** y NO se vuelve a tocar
 - Las fases son independientes y pueden desarrollarse en paralelo (con mocks)
 - Al cerrar una fase, también se escribe su `explicacion-archivos.md` con el mismo estilo de la Fase 0 y se crea su copia inmune en `FaseN/_backup_phaseN_base/`
+- Al cerrar y publicar una fase, la limpieza del working tree se hace de forma segura: solo se preparan cambios de la fase actual y **nunca** se tocan ni se arrastran cambios de fases anteriores.
 
 ### 2. Calidad de Código
 - **NO repetir código**: funciones, clases, atributos, variables
@@ -125,29 +123,12 @@ Cuando trabajes en una fase, debes entregar:
 - Tabla `profiles`
 - Tests de subida y extracción
 
-### FASE 3: Embedding Service
-- Generación de embeddings (sentence-transformers)
-- Workers con Redis
-- Qdrant client
-- Colecciones `cvs` y `offers`
-- Tests de embeddings
-
-### FASE 4: Offer Service
-- CRUD de ofertas
-- Trigger de embeddings al crear oferta
-- Tabla `offers`
-- Tests de CRUD
-
-### FASE 5: Matching Service
-- Cálculo de similitud coseno
-- Almacenamiento de matches
-- Endpoints de consulta personalizada
-- Tabla `matches`
-- Tests de matching
 
 ### FASE 6: Integración Final
-- Endpoints compuestos (ofertas personalizadas con match)
-- Webhooks entre servicios
+- Recolección de ofertas desde proveedor externo
+- Enriquecimiento con datos de perfil del cliente
+- Ranking/filtro de ofertas según perfil
+- Endpoints compuestos (ofertas personalizadas por cliente)
 - Tests E2E
 
 
@@ -155,19 +136,19 @@ Cuando trabajes en una fase, debes entregar:
 
 ## Instrucción Actual
 
-**FASE A DESARROLLAR: [FASE 0 - Infraestructura Base]**
+**FASE A DESARROLLAR: [FASE 6 - Integración Final]**
 
 Actúa como mi Arquitecto de Proyectos IT y desarrolla esta fase siguiendo todos los principios anteriores.
 
 Entregables requeridos:
-1. docker-compose.yml completo y funcional
-2. .env.example con todas las variables
-3. init-db.sql con esquema inicial (solo tabla users de momento)
-4. nginx-proxy/Dockerfile y nginx.conf
-5. Healthchecks para todos los servicios
-6. Tests de infraestructura (conexiones entre servicios)
-7. README.md con instrucciones para levantar todo
-8. Checklist de criterios de aceptación
+1. services/integration-service completo y funcional
+2. Integración en docker-compose.yml con `integration-service`
+3. Integración en nginx para rutas `/integration/*`
+4. Variables en `.env` y `.env.docker` para integración
+5. Endpoints para importar ofertas/vectores externos
+6. Endpoint de recomendaciones por perfil del cliente
+7. Tests unitarios del servicio de integración
+8. README, ENDPOINTS y checklist de criterios de aceptación
 
 Asegúrate de:
 - No repetir código
@@ -177,3 +158,23 @@ Asegúrate de:
 - Todo debe estar documentado
 
 Empieza.
+
+---
+
+## Registro operativo (2026-03-30) - Cumplimiento documental obligatorio Fase 6
+
+Se deja explicitamente registrado que la informacion de validacion de pruebas, persistencia de datos simulados/reales y readiness de frontend queda documentada en los archivos obligatorios de fase y globales:
+
+- `Fase6/README.md`
+- `Fase6/ENDPOINTS.md`
+- `Fase6/criterios-aceptacion.md`
+- `Fase6/explicacion-archivos.md`
+- `Fase6/INTEGRACION_DATOS_EXTERNOS.md`
+- `endpoints.md`
+- `explicacion-archivos.md`
+
+Incluye:
+- Matriz de suites activas y de backup verificadas.
+- Diferenciacion de persistencia fake (unit tests) vs persistencia real en Qdrant (smoke test).
+- Nota operativa de ejecucion pytest por ruta para evitar colisiones entre backups y servicios activos.
+- Backlog de endpoints recomendados para frontend, marcado como pendiente (no implementado).
