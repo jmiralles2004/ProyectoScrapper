@@ -1,7 +1,7 @@
-# 🔌 Endpoints de JobMatch - Fase 0
+# 🔌 Endpoints de JobMatch
 
 ## Descripción General
-Endpoints disponibles en la **infraestructura base (Fase 0)**.
+Este documento lista los endpoints disponibles en el proyecto, empezando por la infraestructura base y la autenticación de la Fase 1.
 
 ---
 
@@ -26,7 +26,39 @@ curl http://localhost/health
 
 ---
 
-## 📝 Notas
-- Este es el **único endpoint de Fase 0**
-- Se usa para validar que la infraestructura está operativa
-- Todos los demás endpoints se agregarán en fases futuras
+## 🔐 FASE 1 - Auth Service
+
+**Estado**: ✅ Activo  
+**Propósito**: Registro, login y validación JWT
+
+| Método | Ruta | Servicio | Descripción |
+|--------|------|---------|------------|
+| `GET` | `/health` | Auth Service | Comprueba que el servicio está operativo |
+| `GET` | `/auth/health` | Auth Service | Alias público del healthcheck a través de Nginx |
+| `POST` | `/auth/register` | Auth Service | Registra un usuario nuevo |
+| `POST` | `/auth/login` | Auth Service | Inicia sesión y devuelve un JWT |
+| `GET` | `/auth/me` | Auth Service | Devuelve el usuario autenticado |
+
+**Ejemplo de registro**:
+```bash
+curl -X POST http://localhost/auth/register \
+	-H "Content-Type: application/json" \
+	-d '{"email":"user@example.com","password":"secret123"}'
+```
+
+**Ejemplo de login**:
+```bash
+curl -X POST http://localhost/auth/login \
+	-H "Content-Type: application/json" \
+	-d '{"email":"user@example.com","password":"secret123"}'
+```
+
+**Respuesta de login**:
+```json
+{"access_token":"<jwt>","token_type":"bearer"}
+```
+
+**Notas**:
+- Los endpoints se exponen a través de Nginx en `/auth/*`
+- `Authorization: Bearer <token>` es obligatorio para `/auth/me`
+- El usuario se guarda en PostgreSQL en la tabla `users`
