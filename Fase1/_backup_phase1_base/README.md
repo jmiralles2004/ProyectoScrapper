@@ -11,11 +11,11 @@ Esta carpeta contiene una copia de seguridad de los archivos que forman la **Fas
 |---------|----------------|
 | `phase1_docker-compose.yml` | Infraestructura con el servicio `auth-service` añadido |
 | `phase1_env.docker` | Variables de entorno de Docker para Fase 1 |
-| `phase1_endpoints.md` | Documentación global de endpoints con Fase 1 incluida |
+| `phase1_endpoints_global.md` | Documentación global de endpoints con Fase 1 incluida |
 | `phase1_nginx.conf` | Proxy Nginx con rutas `/auth/*` |
 | `phase1_auth-service/` | Código completo del servicio de autenticación |
 | `phase1_README.md` | Documento resumen de la Fase 1 |
-| `phase1_ENDPOINTS.md` | Endpoints específicos de la Fase 1 |
+| `phase1_endpoints_phase.md` | Endpoints específicos de la Fase 1 |
 | `phase1_criterios-aceptacion.md` | Checklist de aceptación de la fase |
 
 ## Cómo usarlo
