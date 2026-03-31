@@ -63,19 +63,75 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if repository is not None:
             await repository.close()
 
-    app = FastAPI(title="JobMatch Profile Service", version="1.0.0", lifespan=lifespan)
+    app = FastAPI(
+        title="JobMatch Profile Service",
+        version="1.0.0",
+        lifespan=lifespan,
+        description=(
+            "Gestion de CV y perfil profesional del usuario autenticado.\n\n"
+            "Este servicio recibe CV en PDF, extrae/normaliza texto y guarda:\n"
+            "- Metadatos en PostgreSQL\n"
+            "- Documento estructurado del perfil en MinIO"
+        ),
+    )
     app.state.settings = resolved_settings
 
-    @app.get("/health", response_model=HealthResponse)
-    @app.get("/profiles/health", response_model=HealthResponse)
+    health_description = (
+        "Verifica que el profile-service esta activo y respondiendo.\n\n"
+        "No requiere autenticacion y se usa para healthchecks de infraestructura."
+    )
+
+    upload_cv_description = (
+        "Sube un CV en formato PDF para el usuario autenticado.\n\n"
+        "- Requiere token Bearer.\n"
+        "- Recibe `multipart/form-data` con campo `file`.\n"
+        "- Extrae texto del PDF (con OCR si aplica), normaliza contenido y guarda datos de perfil.\n"
+        "- Devuelve metadatos del perfil actualizado."
+    )
+
+    get_profile_description = (
+        "Recupera el perfil del usuario autenticado.\n\n"
+        "Incluye nombre del CV, bucket/key de almacenamiento y preview del texto extraido."
+    )
+
+    @app.get(
+        "/health",
+        response_model=HealthResponse,
+        summary="Verificar estado del profile-service",
+        description=health_description,
+        tags=["Health"],
+    )
+    @app.get(
+        "/profiles/health",
+        response_model=HealthResponse,
+        summary="Verificar estado del profile-service (prefijo profiles)",
+        description=health_description,
+        tags=["Health"],
+    )
     async def health() -> HealthResponse:
         """Return a basic healthcheck payload."""
 
         return HealthResponse(status="ok", service=resolved_settings.service_name)
 
-    @app.post("/profiles/cv", response_model=ProfileUploadResponse, status_code=status.HTTP_201_CREATED)
+    @app.post(
+        "/profiles/cv",
+        response_model=ProfileUploadResponse,
+        status_code=status.HTTP_201_CREATED,
+        summary="Subir CV PDF del usuario autenticado",
+        description=upload_cv_description,
+        responses={
+            400: {"description": "El archivo no es un PDF valido"},
+            401: {"description": "Falta token o token invalido/expirado"},
+            422: {"description": "PDF sin texto extraible o request invalido"},
+            502: {"description": "Error guardando datos en almacenamiento"},
+        },
+        tags=["Profiles"],
+    )
     async def upload_cv(
-        file: UploadFile = File(...),
+        file: UploadFile = File(
+            ...,
+            description="Archivo CV en formato PDF.",
+        ),
         user_id=Depends(get_current_user_id),
         profile_service: ProfileService = Depends(get_profile_service),
     ) -> ProfileUploadResponse:
@@ -90,7 +146,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except StorageError as exc:
             raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
 
-    @app.get("/profiles/me", response_model=ProfileReadResponse)
+    @app.get(
+        "/profiles/me",
+        response_model=ProfileReadResponse,
+        summary="Consultar perfil del usuario autenticado",
+        description=get_profile_description,
+        responses={
+            401: {"description": "Falta token o token invalido/expirado"},
+            404: {"description": "El usuario aun no ha subido CV"},
+        },
+        tags=["Profiles"],
+    )
     async def get_profile(
         user_id=Depends(get_current_user_id),
         profile_service: ProfileService = Depends(get_profile_service),

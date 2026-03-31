@@ -76,11 +76,66 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         yield
 
-    app = FastAPI(title="JobMatch Integration Service", version="1.0.0", lifespan=lifespan)
+    app = FastAPI(
+        title="JobMatch Integration Service",
+        version="1.0.0",
+        lifespan=lifespan,
+        description=(
+            "Servicio de integracion de vectores y recomendacion semantica.\n\n"
+            "Permite: \n"
+            "- Importar ofertas vectorizadas\n"
+            "- Importar vector de perfil de usuario\n"
+            "- Consultar catalogo de ofertas\n"
+            "- Obtener recomendaciones por similitud"
+        ),
+    )
     app.state.settings = resolved_settings
 
-    @app.get("/health", response_model=HealthResponse)
-    @app.get("/integration/health", response_model=HealthResponse)
+    health_description = (
+        "Verifica que el integration-service esta activo y operativo.\n\n"
+        "No requiere autenticacion y se usa para healthchecks de infraestructura."
+    )
+
+    import_offers_description = (
+        "Importa un lote de ofertas con su embedding vectorial.\n\n"
+        "- Uso esperado: integracion interna (ETL o proveedor externo).\n"
+        "- Si hay API key configurada, requiere header `x-internal-api-key`.\n"
+        "- Cada vector debe tener exactamente el tamano configurado en el servicio."
+    )
+
+    import_profile_vector_description = (
+        "Registra o actualiza el vector de perfil de un usuario.\n\n"
+        "- Si hay API key configurada, requiere header `x-internal-api-key`.\n"
+        "- Este vector se usa despues para recomendaciones personalizadas."
+    )
+
+    catalog_description = (
+        "Lista ofertas almacenadas en la base vectorial sin ranking por usuario.\n\n"
+        "- Endpoint de catalogo/inspeccion operativa.\n"
+        "- Si hay API key configurada, requiere header `x-internal-api-key`."
+    )
+
+    recommended_description = (
+        "Devuelve ofertas recomendadas para el usuario autenticado.\n\n"
+        "- Requiere token Bearer (`Authorization: Bearer <token>`).\n"
+        "- Busca similitud entre vector de perfil del usuario y vectores de ofertas.\n"
+        "- Si el usuario no tiene vector de perfil, devuelve 404."
+    )
+
+    @app.get(
+        "/health",
+        response_model=HealthResponse,
+        summary="Verificar estado del integration-service",
+        description=health_description,
+        tags=["Health"],
+    )
+    @app.get(
+        "/integration/health",
+        response_model=HealthResponse,
+        summary="Verificar estado del integration-service (prefijo integration)",
+        description=health_description,
+        tags=["Health"],
+    )
     async def health() -> HealthResponse:
         """Return a basic healthcheck payload."""
 
@@ -90,6 +145,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         "/integration/offers/import",
         response_model=OffersImportResponse,
         status_code=status.HTTP_201_CREATED,
+        summary="Importar lote de ofertas vectorizadas",
+        description=import_offers_description,
+        responses={
+            400: {"description": "Vector invalido (vacio, tamano incorrecto o no finito)"},
+            401: {"description": "x-internal-api-key invalida cuando esta configurada"},
+            422: {"description": "Payload invalido"},
+            502: {"description": "Fallo al persistir datos en la base vectorial"},
+        },
+        tags=["Integration Ingest"],
     )
     async def import_offers(
         payload: OffersImportRequest,
@@ -132,6 +196,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         "/integration/profiles/import-vector",
         response_model=ProfileVectorImportResponse,
         status_code=status.HTTP_201_CREATED,
+        summary="Importar vector de perfil de usuario",
+        description=import_profile_vector_description,
+        responses={
+            400: {"description": "Vector invalido (vacio, tamano incorrecto o no finito)"},
+            401: {"description": "x-internal-api-key invalida cuando esta configurada"},
+            422: {"description": "Payload invalido"},
+            502: {"description": "Fallo al persistir el vector de perfil"},
+        },
+        tags=["Integration Ingest"],
     )
     async def import_profile_vector(
         payload: ProfileVectorImportRequest,
@@ -157,9 +230,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             vector_size=integration_service.expected_vector_size,
         )
 
-    @app.get("/integration/offers/catalog", response_model=OfferCatalogResponse)
+    @app.get(
+        "/integration/offers/catalog",
+        response_model=OfferCatalogResponse,
+        summary="Consultar catalogo de ofertas almacenadas",
+        description=catalog_description,
+        responses={
+            401: {"description": "x-internal-api-key invalida cuando esta configurada"},
+            502: {"description": "Fallo al consultar la base vectorial"},
+        },
+        tags=["Integration Catalog"],
+    )
     async def get_offer_catalog(
-        limit: int = Query(default=20, ge=1, le=100),
+        limit: int = Query(
+            default=20,
+            ge=1,
+            le=100,
+            description="Cantidad maxima de ofertas a devolver.",
+        ),
         _: None = Depends(verify_ingest_api_key),
         integration_service: IntegrationService = Depends(get_integration_service),
     ) -> OfferCatalogResponse:
@@ -176,9 +264,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             offers=[_to_offer_response(item) for item in offers],
         )
 
-    @app.get("/integration/offers/recommended", response_model=RecommendedOffersResponse)
+    @app.get(
+        "/integration/offers/recommended",
+        response_model=RecommendedOffersResponse,
+        summary="Obtener ofertas recomendadas para el usuario autenticado",
+        description=recommended_description,
+        responses={
+            401: {"description": "Falta token o token invalido/expirado"},
+            404: {"description": "No existe vector de perfil para el usuario"},
+            502: {"description": "Fallo al calcular recomendaciones"},
+        },
+        tags=["Integration Recommendations"],
+    )
     async def get_recommended_offers(
-        limit: int = Query(default=10, ge=1, le=50),
+        limit: int = Query(
+            default=10,
+            ge=1,
+            le=50,
+            description="Cantidad maxima de recomendaciones a devolver.",
+        ),
         user_id=Depends(get_current_user_id),
         integration_service: IntegrationService = Depends(get_integration_service),
     ) -> RecommendedOffersResponse:
