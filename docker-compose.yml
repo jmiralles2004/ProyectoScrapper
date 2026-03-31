@@ -112,7 +112,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB}
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
-      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-minio:9000}
+      MINIO_ENDPOINT: minio:9000
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET_PROFILES: ${MINIO_BUCKET_PROFILES:-profiles}
@@ -144,7 +144,7 @@ services:
       dockerfile: Dockerfile
     container_name: jobmatch-integration-service
     environment:
-      QDRANT_URL: ${QDRANT_URL}
+      QDRANT_URL: http://qdrant:6333
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       INTEGRATION_VECTOR_SIZE: ${INTEGRATION_VECTOR_SIZE:-384}

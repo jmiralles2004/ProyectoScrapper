@@ -11,6 +11,7 @@ Fase 7 añade una **capa de documentación OpenAPI/Swagger por gateway** al proy
 **Puntos clave de Fase 7**:
 - Nuevo servicio `swagger-ui`.
 - Selector centralizado de contratos OpenAPI para los 3 microservicios.
+- Hosts internos fijos para dependencias entre contenedores (MinIO/Qdrant) para evitar fallos por variables locales.
 
 ---
 
@@ -21,6 +22,16 @@ Fase 7 añade una **capa de documentación OpenAPI/Swagger por gateway** al proy
 - `/swagger/`
 - `/auth/docs`, `/profiles/docs`, `/integration/docs`
 - `/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`
+
+---
+
+### `scripts/test_all_endpoints.sh` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Ejecutar validación end-to-end de todos los endpoints documentados.
+
+**Qué valida**:
+- Salud de infraestructura (`/health` y healthchecks por servicio).
+- Endpoints de negocio de Auth, Profile e Integration.
+- Endpoints de documentación Swagger/OpenAPI por prefijo y portal unificado.
 
 ---
 
@@ -87,6 +98,7 @@ Fase 7 añade una **capa de documentación OpenAPI/Swagger por gateway** al proy
 - Fase 7 mejora gobernanza y trazabilidad API sin cambiar lógica de negocio.
 - La documentación queda servida bajo rutas estables por dominio funcional.
 - Existe portal unificado `/swagger/` para navegar todos los contratos desde una sola UI.
+- Existe script único para validar toda la superficie de endpoints del backend en una sola ejecución.
 - Frontend y QA pueden consumir OpenAPI JSON sin acoplarse a puertos internos.
 
 ---

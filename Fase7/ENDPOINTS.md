@@ -16,6 +16,7 @@
 - Estas rutas se consumen a traves de Nginx usando los prefijos funcionales.
 - `/swagger/` concentra en una sola interfaz los contratos de todos los microservicios.
 - No reemplazan endpoints de negocio; son endpoints de documentacion tecnica.
+- Validacion integral recomendada: `scripts/test_all_endpoints.sh`.
 
 ## Nota de seguridad
 - En produccion, proteger estas rutas con auth o red interna.

@@ -9,6 +9,7 @@
 - `GET /integration/docs` responde correctamente.
 - `GET /integration/openapi.json` responde con esquema OpenAPI valido.
 - No se rompen los endpoints funcionales existentes de Auth, Profile e Integration.
+- `scripts/test_all_endpoints.sh` pasa en verde validando endpoints de infraestructura, negocio y documentacion.
 - `endpoints.md` queda actualizado con la seccion de Fase 7.
 - `fases.md` registra Fase 7 y su cumplimiento documental.
 - Existe carpeta de respaldo inmutable en `Fase7/_backup_phase7_base/`.

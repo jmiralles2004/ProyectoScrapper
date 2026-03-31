@@ -19,6 +19,7 @@ Exponer de forma estable la documentacion tecnica de los microservicios (Auth, P
 ## Componentes
 - `docker-compose.yml` - Servicio `swagger-ui` integrado en la red del proyecto.
 - `nginx-proxy/nginx.conf` - Publicacion de `swagger-ui` en `/swagger/`.
+- `scripts/test_all_endpoints.sh` - Validacion integral automatizada de todos los endpoints.
 - `services/auth-service/app/main.py` - Swagger/OpenAPI por prefijo de auth.
 - `services/profile-service/app/main.py` - Swagger/OpenAPI por prefijo de profiles.
 - `services/integration-service/app/main.py` - Swagger/OpenAPI por prefijo de integration.
@@ -40,5 +41,20 @@ curl http://localhost/integration/openapi.json
 curl -I http://localhost/swagger/
 ```
 
+## Verificacion integral automatizada
+```bash
+scripts/test_all_endpoints.sh
+```
+
+Opcional, forzando archivo de entorno:
+```bash
+ENV_FILE=.env.docker scripts/test_all_endpoints.sh
+```
+
+Este script levanta el stack completo y valida de punta a punta todos los endpoints documentados.
+
 ## Nota de seguridad
 En entornos de produccion, estas rutas deben protegerse con autenticacion, allowlist de red o ambos mecanismos.
+
+## Nota operativa de entorno
+Para Docker Compose se recomienda usar `.env.docker`. El compose ya fuerza hosts internos para MinIO y Qdrant en los servicios que dependen de ellos.

@@ -135,6 +135,7 @@ Cuando trabajes en una fase, debes entregar:
 - Exposicion de Swagger por microservicio via Nginx (`/auth/docs`, `/profiles/docs`, `/integration/docs`)
 - Exposicion de contratos OpenAPI JSON por prefijo (`/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`)
 - Contenedor dedicado `swagger-ui` con portal unificado (`/swagger/`)
+- Script integral de validacion de endpoints (`scripts/test_all_endpoints.sh`)
 - Contrato API vivo para frontend, QA e integraciones
 - Documentacion de fase y backup inmutable con estandares del proyecto
 
@@ -203,5 +204,7 @@ Incluye:
 - Rutas Swagger por servicio (`/auth/docs`, `/profiles/docs`, `/integration/docs`).
 - Rutas OpenAPI JSON por servicio (`/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`).
 - Portal unificado Swagger UI por gateway (`/swagger/`).
+- Script unico de validacion integral de endpoints (`scripts/test_all_endpoints.sh`).
+- Hardening de compose para usar hosts internos entre contenedores en dependencias criticas (MinIO y Qdrant).
 - Nota de seguridad para proteger documentacion en produccion (auth o red interna).
 - Backup inmutable de fase para trazabilidad y recuperacion.

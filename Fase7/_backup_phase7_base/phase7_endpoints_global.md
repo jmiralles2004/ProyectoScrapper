@@ -177,6 +177,7 @@ curl http://localhost/swagger/
 - Esta fase no añade endpoints de negocio nuevos, solo endpoints de documentación técnica.
 - Los contratos OpenAPI son útiles para frontend, QA y clientes API.
 - `/swagger/` centraliza en una sola UI los contratos de Auth, Profile e Integration.
+- Validacion integral automatizada disponible en `scripts/test_all_endpoints.sh`.
 - En producción se recomienda proteger estas rutas (auth, allowlist o red interna).
 
 ---
@@ -193,6 +194,9 @@ curl http://localhost/swagger/
 
 Nota operativa:
 - Ejecutar `pytest -q` en la raiz puede provocar colisiones de import entre servicios activos y backups (modulos `app` duplicados). La ejecucion fiable se hace por suite/ruta.
+
+Validacion integral recomendada:
+- `scripts/test_all_endpoints.sh` levanta stack completo y valida todos los endpoints documentados (infra, auth, profiles, integration y docs Swagger/OpenAPI).
 
 ---
 
