@@ -13,7 +13,7 @@ services:
 
   # Base de datos PostgreSQL con extensión pgvector
   postgres:
-    image: pgvector/pgvector:pg16
+    image: pgvector/pgvector:0.8.2-pg16-trixie
     container_name: jobmatch-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -36,7 +36,7 @@ services:
 
   # Almacenamiento de objetos (archivos)
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: jobmatch-minio
     command: server /data --console-address ":9001"
     environment:
@@ -59,7 +59,7 @@ services:
 
   # Base de datos vectorial para búsquedas semánticas
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.17.1
     container_name: jobmatch-qdrant
     ports:
       - "${QDRANT_PORT:-6333}:6333"
@@ -168,7 +168,7 @@ services:
 
   # Contenedor de documentacion Swagger UI (Fase 7)
   swagger-ui:
-    image: swaggerapi/swagger-ui:latest
+    image: swaggerapi/swagger-ui:v5.32.1
     container_name: jobmatch-swagger-ui
     environment:
       URLS: >-
