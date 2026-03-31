@@ -1,0 +1,27 @@
+# Explicacion de la Estructura - Fase 7
+
+## Descripcion General
+Fase 7 introduce una capa de documentacion OpenAPI/Swagger accesible por prefijos de gateway para los tres microservicios activos.
+
+### `services/auth-service/app/main.py` -> No eliminar (CRITICO)
+- Expone `GET /auth/docs` y `GET /auth/openapi.json`.
+
+### `services/profile-service/app/main.py` -> No eliminar (CRITICO)
+- Expone `GET /profiles/docs` y `GET /profiles/openapi.json`.
+
+### `services/integration-service/app/main.py` -> No eliminar (CRITICO)
+- Expone `GET /integration/docs` y `GET /integration/openapi.json`.
+
+### `endpoints.md` -> No eliminar (CRITICO)
+- Documenta todos los endpoints de negocio y de documentacion.
+
+### `fases.md` -> No eliminar (CRITICO)
+- Declara oficialmente Fase 7 en la hoja maestra del proyecto.
+
+### `_backup_phase7_base/` -> No eliminar (CRITICO)
+- Guarda la referencia inmutable de la fase para trazabilidad y recuperacion.
+
+## Hechos clave
+- No hay logica de negocio nueva en esta fase.
+- Se habilita contrato API vivo para frontend, QA e integraciones.
+- Se recomienda securizar rutas docs/openapi en produccion.
