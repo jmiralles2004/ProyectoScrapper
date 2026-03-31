@@ -134,6 +134,7 @@ Cuando trabajes en una fase, debes entregar:
 ### FASE 7: Documentación OpenAPI/Swagger por Gateway
 - Exposicion de Swagger por microservicio via Nginx (`/auth/docs`, `/profiles/docs`, `/integration/docs`)
 - Exposicion de contratos OpenAPI JSON por prefijo (`/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`)
+- Contenedor dedicado `swagger-ui` con portal unificado (`/swagger/`)
 - Contrato API vivo para frontend, QA e integraciones
 - Documentacion de fase y backup inmutable con estandares del proyecto
 
@@ -149,11 +150,12 @@ Actúa como mi Arquitecto de Proyectos IT y desarrolla esta fase siguiendo todos
 Entregables requeridos:
 1. Exponer Swagger por gateway para auth/profile/integration
 2. Exponer OpenAPI JSON por gateway para auth/profile/integration
-3. Mantener compatibilidad de endpoints de negocio existentes
-4. Actualizar `endpoints.md` (global) con rutas documentales de Fase 7
-5. Crear `Fase7/README.md`, `Fase7/ENDPOINTS.md`, `Fase7/criterios-aceptacion.md`, `Fase7/explicacion-archivos.md`
-6. Crear backup inmutable en `Fase7/_backup_phase7_base/`
-7. Verificacion basica tecnica de rutas documentales
+3. Integrar contenedor dedicado `swagger-ui` y publicarlo por Nginx en `/swagger/`
+4. Mantener compatibilidad de endpoints de negocio existentes
+5. Actualizar `endpoints.md` (global) con rutas documentales de Fase 7
+6. Crear `Fase7/README.md`, `Fase7/ENDPOINTS.md`, `Fase7/criterios-aceptacion.md`, `Fase7/explicacion-archivos.md`
+7. Crear backup inmutable en `Fase7/_backup_phase7_base/`
+8. Verificacion basica tecnica de rutas documentales
 
 Asegúrate de:
 - No repetir código
@@ -200,5 +202,6 @@ Se deja explicitamente registrado que la capa de documentacion OpenAPI/Swagger p
 Incluye:
 - Rutas Swagger por servicio (`/auth/docs`, `/profiles/docs`, `/integration/docs`).
 - Rutas OpenAPI JSON por servicio (`/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`).
+- Portal unificado Swagger UI por gateway (`/swagger/`).
 - Nota de seguridad para proteger documentacion en produccion (auth o red interna).
 - Backup inmutable de fase para trazabilidad y recuperacion.

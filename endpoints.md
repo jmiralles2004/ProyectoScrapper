@@ -163,17 +163,20 @@ curl "http://localhost/integration/offers/recommended?limit=10" \
 | `GET` | `/profiles/openapi.json` | Profile Service | Contrato OpenAPI JSON del servicio de perfiles |
 | `GET` | `/integration/docs` | Integration Service | Swagger UI del servicio de integración |
 | `GET` | `/integration/openapi.json` | Integration Service | Contrato OpenAPI JSON del servicio de integración |
+| `GET` | `/swagger/` | Swagger UI Container | Portal unificado con selector de contratos OpenAPI del backend |
 
 **Ejemplos**:
 ```bash
 curl http://localhost/auth/docs
 curl http://localhost/profiles/openapi.json
 curl http://localhost/integration/docs
+curl http://localhost/swagger/
 ```
 
 **Notas**:
 - Esta fase no añade endpoints de negocio nuevos, solo endpoints de documentación técnica.
 - Los contratos OpenAPI son útiles para frontend, QA y clientes API.
+- `/swagger/` centraliza en una sola UI los contratos de Auth, Profile e Integration.
 - En producción se recomienda proteger estas rutas (auth, allowlist o red interna).
 
 ---

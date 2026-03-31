@@ -3,6 +3,12 @@
 ## Descripcion General
 Fase 7 introduce una capa de documentacion OpenAPI/Swagger accesible por prefijos de gateway para los tres microservicios activos.
 
+### `docker-compose.yml` -> No eliminar (CRITICO)
+- Integra el contenedor `swagger-ui` para portal documental unificado.
+
+### `nginx-proxy/nginx.conf` -> No eliminar (CRITICO)
+- Publica `GET /swagger/` y enruta al contenedor `swagger-ui`.
+
 ### `services/auth-service/app/main.py` -> No eliminar (CRITICO)
 - Expone `GET /auth/docs` y `GET /auth/openapi.json`.
 
@@ -24,4 +30,5 @@ Fase 7 introduce una capa de documentacion OpenAPI/Swagger accesible por prefijo
 ## Hechos clave
 - No hay logica de negocio nueva en esta fase.
 - Se habilita contrato API vivo para frontend, QA e integraciones.
+- Existe una UI unificada en `/swagger/` para navegar los 3 contratos OpenAPI.
 - Se recomienda securizar rutas docs/openapi en produccion.

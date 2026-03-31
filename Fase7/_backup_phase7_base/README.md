@@ -13,6 +13,8 @@ IMPORTANTE: Estos archivos son la referencia fija de esta fase y no deben modifi
 | `phase7_endpoints_phase.md` | Endpoints especificos de la Fase 7 |
 | `phase7_criterios-aceptacion.md` | Checklist de aceptacion |
 | `phase7_explicacion-archivos.md` | Explicacion estructural de la fase |
+| `phase7_docker-compose.yml` | Integracion del contenedor `swagger-ui` en la plataforma |
+| `phase7_nginx.conf` | Publicacion de portal Swagger unificado en `/swagger/` |
 | `phase7_fases.md` | Hoja maestra de fases con Fase 7 registrada |
 | `phase7_endpoints_global.md` | Documentacion global de endpoints actualizada |
 | `phase7_explicacion-global.md` | Explicacion global actualizada |

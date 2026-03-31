@@ -1,5 +1,7 @@
 # Criterios de aceptacion - Fase 7
 
+- El contenedor `swagger-ui` arranca con Docker.
+- `GET /swagger/` responde correctamente y muestra selector de servicios.
 - `GET /auth/docs` responde correctamente.
 - `GET /auth/openapi.json` responde con esquema OpenAPI valido.
 - `GET /profiles/docs` responde correctamente.

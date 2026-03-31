@@ -5,6 +5,25 @@ Fase 7 añade una **capa de documentación OpenAPI/Swagger por gateway** al proy
 
 ---
 
+### `docker-compose.yml` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Integrar el contenedor dedicado de documentación.
+
+**Puntos clave de Fase 7**:
+- Nuevo servicio `swagger-ui`.
+- Selector centralizado de contratos OpenAPI para los 3 microservicios.
+
+---
+
+### `nginx-proxy/nginx.conf` → ⚠️ No eliminar (CRÍTICO)
+**Propósito**: Publicar la documentación centralizada por gateway.
+
+**Rutas de Fase 7**:
+- `/swagger/`
+- `/auth/docs`, `/profiles/docs`, `/integration/docs`
+- `/auth/openapi.json`, `/profiles/openapi.json`, `/integration/openapi.json`
+
+---
+
 ### `services/auth-service/app/main.py` → ⚠️ No eliminar (CRÍTICO)
 **Propósito**: Exponer documentación del servicio de autenticación bajo prefijo público.
 
@@ -67,6 +86,7 @@ Fase 7 añade una **capa de documentación OpenAPI/Swagger por gateway** al proy
 ## ✅ Hechos clave
 - Fase 7 mejora gobernanza y trazabilidad API sin cambiar lógica de negocio.
 - La documentación queda servida bajo rutas estables por dominio funcional.
+- Existe portal unificado `/swagger/` para navegar todos los contratos desde una sola UI.
 - Frontend y QA pueden consumir OpenAPI JSON sin acoplarse a puertos internos.
 
 ---

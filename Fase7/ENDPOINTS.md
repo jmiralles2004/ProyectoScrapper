@@ -10,9 +10,11 @@
 | `GET` | `/profiles/openapi.json` | Profile Service | OpenAPI JSON de perfiles |
 | `GET` | `/integration/docs` | Integration Service | Swagger UI de integracion |
 | `GET` | `/integration/openapi.json` | Integration Service | OpenAPI JSON de integracion |
+| `GET` | `/swagger/` | Swagger UI Container | Portal unificado con selector de contratos OpenAPI |
 
 ## Uso
 - Estas rutas se consumen a traves de Nginx usando los prefijos funcionales.
+- `/swagger/` concentra en una sola interfaz los contratos de todos los microservicios.
 - No reemplazan endpoints de negocio; son endpoints de documentacion tecnica.
 
 ## Nota de seguridad
